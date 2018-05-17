@@ -11,7 +11,7 @@ module.exports = () => ({
   },
   "Discovery": {
     "MDNS": {
-      "Enabled": true,
+      "Enabled": false,
       "Interval": 10
     },
     "webRTCStar": {
