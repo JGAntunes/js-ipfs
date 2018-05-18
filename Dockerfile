@@ -16,7 +16,7 @@ EXPOSE 5002
 EXPOSE 9090
 
 RUN apt-get update \
-  && apt-get install --yes $BUILD_DEPS \
+  && apt-get install --yes $BUILD_DEPS net-tools \
   && rm -rf /var/lib/apt/lists/* \
   && npm install --production \
   && npm install wrtc@0.0.67 --production \
