@@ -13,10 +13,10 @@ fi
 # This can be the case when we restart a container without stopping/removing it
 node src/cli/bin.js init || true
 
-IPFS_API_HOST=$(hostname -I | awk '{print $2}')
+IPFS_API_HOST=$(hostname -I | awk '{print $1}')
 
 if [ -n "$IPFS_API_HOST" ]; then
   sed -i.bak "s/127.0.0.1/$IPFS_API_HOST/g" $IPFS_PATH/config
 fi
 
-node src/cli/bin.js daemon
+node src/cli/bin.js daemon --enable-dht-experiment --enable-pubsub-experiment

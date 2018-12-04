@@ -38,13 +38,13 @@ class Node extends libp2p {
       config: {
         peerDiscovery: {
           mdns: {
-            enabled: true
+            enabled: false
           },
           bootstrap: {
-            enabled: true
+            enabled: false
           },
           websocketStar: {
-            enabled: true
+            enabled: false
           }
         },
         dht: {

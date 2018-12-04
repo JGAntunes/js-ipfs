@@ -36,6 +36,26 @@ module.exports = function pubsub (self) {
       self._libp2pNode.pubsub.subscribe(topic, options, handler, callback)
     },
 
+    create: (topic, handler, options, callback) => {
+      if (typeof options === 'function') {
+        callback = options
+        options = {}
+      }
+
+      if (!callback) {
+        return new Promise((resolve, reject) => {
+          self._libp2pNode.pubsub.createTopic(topic, options, handler, (err) => {
+            if (err) {
+              return reject(err)
+            }
+            resolve()
+          })
+        })
+      }
+
+      self._libp2pNode.pubsub.createTopic(topic, options, handler, callback)
+    },
+
     unsubscribe: (topic, handler, callback) => {
       if (!self._options.EXPERIMENTAL.pubsub) {
         return callback

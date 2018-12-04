@@ -9,7 +9,6 @@ exports = module.exports
 exports.subscribe = {
   handler: (request, reply) => {
     const query = request.query
-    const discover = query.discover === 'true'
     const topic = query.arg
 
     if (!topic) {
@@ -21,12 +20,7 @@ exports.subscribe = {
     const res = new PassThrough({ highWaterMark: 1 })
 
     const handler = (msg) => {
-      res.write(JSON.stringify({
-        from: bs58.decode(msg.from).toString('base64'),
-        data: msg.data.toString('base64'),
-        seqno: msg.seqno.toString('base64'),
-        topicIDs: msg.topicIDs
-      }) + '\n', 'utf8')
+      res.write(JSON.stringify(msg) + '\n', 'utf8')
     }
 
     // js-ipfs-http-client needs a reply, and go-ipfs does the same thing
@@ -39,7 +33,47 @@ exports.subscribe = {
     request.once('disconnect', unsubscribe)
     request.once('finish', unsubscribe)
 
-    ipfs.pubsub.subscribe(topic, handler, { discover: discover }, (err) => {
+    ipfs.pubsub.subscribe(topic, handler, null, (err) => {
+      if (err) {
+        return reply(err)
+      }
+
+      reply(res)
+        .header('X-Chunked-Output', '1')
+        .header('content-encoding', 'identity') // stop gzip from buffering, see https://github.com/hapijs/hapi/issues/2975
+        .header('content-type', 'application/json')
+    })
+  }
+}
+
+exports.create = {
+  handler: (request, reply) => {
+    const query = request.query
+    const topic = query.arg
+
+    if (!topic) {
+      return reply(new Error('Missing topic'))
+    }
+
+    const ipfs = request.server.app.ipfs
+
+    const res = new PassThrough({ highWaterMark: 1 })
+
+    const handler = (msg) => {
+      res.write(JSON.stringify(msg) + '\n', 'utf8')
+    }
+
+    // js-ipfs-api needs a reply, and go-ipfs does the same thing
+    res.write('{}\n')
+
+    const unsubscribe = () => {
+      ipfs.pubsub.unsubscribe(topic, handler, () => res.end())
+    }
+
+    request.once('disconnect', unsubscribe)
+    request.once('finish', unsubscribe)
+
+    ipfs.pubsub.create(topic, handler, null, (err) => {
       if (err) {
         return reply(err)
       }
