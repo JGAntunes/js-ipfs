@@ -1,0 +1,21 @@
+stages:
+  - build
+
+
+variables:
+  # Docker registry config
+  DOCKER_REGISTRY_URL: registry.gitlab.com
+  PROJECT_PATH: ${DOCKER_REGISTRY_URL}/jgantunes/${CI_PROJECT_NAME}
+
+# Build the base image and store it as an artifact
+#  - PROJECT_PATH: docker image repository path
+build:image:
+  stage: build
+  image: docker:latest
+  tags:
+    - node
+  script:
+    - docker build --rm -t ${PROJECT_PATH}:${CI_COMMIT_SHA} .
+    - docker tag ${PROJECT_PATH}:${CI_COMMIT_SHA} ${PROJECT_PATH}:latest
+    - docker push ${PROJECT_PATH}:${CI_COMMIT_SHA}
+    - docker push ${PROJECT_PATH}:latest
