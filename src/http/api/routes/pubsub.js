@@ -15,14 +15,6 @@ module.exports = (server) => {
 
   api.route({
     method: '*',
-    path: '/api/v0/pubsub/create',
-    config: {
-      handler: resources.pubsub.create.handler
-    }
-  })
-
-  api.route({
-    method: '*',
     path: '/api/v0/pubsub/pub',
     config: {
       handler: resources.pubsub.publish.handler

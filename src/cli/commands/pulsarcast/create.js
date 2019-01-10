@@ -1,7 +1,5 @@
 'use strict'
 
-const print = require('../../utils').print
-
 module.exports = {
   command: 'create <topic>',
 
@@ -10,11 +8,7 @@ module.exports = {
   builder: {},
 
   handler (argv) {
-    const handler = (msg) => {
-      print(msg.data.toString())
-    }
-
-    argv.ipfs.pubsub.createTopic(argv.topic, handler, (err) => {
+    argv.ipfs.pulsarcast.createTopic(argv.topic, (err) => {
       if (err) {
         throw err
       }

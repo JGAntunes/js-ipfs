@@ -16,6 +16,7 @@ module.exports = (server) => {
   require('./file')(server)
   require('./files')(server)
   require('./pubsub')(server)
+  require('./pulsarcast')(server)
   require('./debug')(server)
   require('./webui')(server)
   require('./dns')(server)

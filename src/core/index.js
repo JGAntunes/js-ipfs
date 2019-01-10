@@ -156,6 +156,7 @@ class IPFS extends EventEmitter {
     this.pingPullStream = components.pingPullStream(this)
     this.pingReadableStream = components.pingReadableStream(this)
     this.pubsub = components.pubsub(this)
+    this.pulsarcast = components.pulsarcast(this)
     this.dht = components.dht(this)
     this.dns = components.dns(this)
     this.key = components.key(this)
