@@ -1,5 +1,7 @@
 'use strict'
 
+const multiaddr = require('multiaddr')
+const mafmt = require('mafmt')
 const waterfall = require('async/waterfall')
 const RepoErrors = require('ipfs-repo').errors
 
@@ -68,18 +70,38 @@ module.exports = (self) => {
       return
     }
 
-    // Log the node info
-    self.id((err, peerId) => {
-      self.log('node info %j', peerId)
+    // Trace method
+    const trace = () => {
+      // Log the node info
+      self.id((err, peerId) => {
+        self.log('node info %j', peerId)
 
-      // HACK some trace data
-      setInterval(() => {
-        self.swarm.peers((err, peers) => {
-          const trace = {id: peerId.id, addresses: peerId.addresses}
-          self.log.trace('peers info %j', {peers, ...trace})
-        })
-      }, 10000)
-    })
+        // HACK some trace data
+        setInterval(() => {
+          self.swarm.peers((err, peers) => {
+            const trace = {id: peerId.id, addresses: peerId.addresses}
+
+            peers = peers.map((item) => {
+              let ma = multiaddr(item.addr.toString())
+              if (!mafmt.IPFS.matches(ma)) {
+                ma = ma.encapsulate('/ipfs/' + item.peer.toB58String())
+              }
+              return ma.toString()
+            })
+
+            self.log.trace('peers info %j', {peers, ...trace})
+          })
+        }, 10000)
+      })
+    }
+
+    //HACK simple trace data
+    self.once('start', trace)
+    // if (!self._peerInfo) {
+    //   self.once('init', trace)
+    // } else {
+    //   trace()
+    // }
 
     self.log('booted')
     self.emit('ready')
