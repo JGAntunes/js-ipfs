@@ -67,6 +67,20 @@ module.exports = (self) => {
       }
       return
     }
+
+    // Log the node info
+    self.id((err, peerId) => {
+      self.log('node info %j', peerId)
+
+      // HACK some trace data
+      setInterval(() => {
+        self.swarm.peers((err, peers) => {
+          const trace = {id: peerId.id, addresses: peerId.addresses}
+          self.log.trace('peers info %j', {peers, ...trace})
+        })
+      }, 10000)
+    })
+
     self.log('booted')
     self.emit('ready')
   })
