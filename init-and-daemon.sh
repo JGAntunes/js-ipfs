@@ -16,7 +16,8 @@ node src/cli/bin.js init $IPFS_CONFIG || true
 IPFS_API_HOST=$(hostname -I | awk '{print $1}')
 
 if [ -n "$IPFS_API_HOST" ]; then
-  sed -i.bak "s/127.0.0.1/$IPFS_API_HOST/g" $IPFS_PATH/config
+  sed -i.bak "s/127.0.0.1/$IPFS_API_HOST/g" "$IPFS_PATH/config"
+  sed -i.bak "s/0.0.0.0/$IPFS_API_HOST/g" "$IPFS_PATH/config"
 fi
 
 node src/cli/bin.js daemon --enable-dht-experiment --enable-pubsub-experiment
