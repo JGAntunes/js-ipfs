@@ -41,7 +41,7 @@ class Node extends libp2p {
             enabled: false
           },
           bootstrap: {
-            enabled: false
+            enabled: true
           },
           websocketStar: {
             enabled: false
