@@ -24,11 +24,11 @@ module.exports = function pulsarcast (self) {
 
       if (!callback) {
         return new Promise((resolve, reject) => {
-          self._libp2pNode.pulsarcast.subscribe(topic, options, handler, (err) => {
+          self._libp2pNode.pulsarcast.subscribe(topic, options, handler, (err, ...args) => {
             if (err) {
               return reject(err)
             }
-            resolve()
+            resolve(...args)
           })
         })
       }
@@ -50,11 +50,11 @@ module.exports = function pulsarcast (self) {
 
       if (!callback) {
         return new Promise((resolve, reject) => {
-          self._libp2pNode.pulsarcast.createTopic(topic, options, handler, (err) => {
+          self._libp2pNode.pulsarcast.createTopic(topic, options, handler, (err, ...args) => {
             if (err) {
               return reject(err)
             }
-            resolve()
+            resolve(...args)
           })
         })
       }

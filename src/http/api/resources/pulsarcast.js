@@ -19,12 +19,12 @@ exports.subscribe = {
 
     const ipfs = request.server.app.ipfs
 
-    ipfs.pulsarcast.subscribe(topic, noop, null, (err) => {
+    ipfs.pulsarcast.subscribe(topic, noop, null, (err, topicNode) => {
       if (err) {
         return reply(err)
       }
 
-      reply({ ok: 1 })
+      reply(topicNode)
     })
   }
 }
@@ -40,12 +40,12 @@ exports.create = {
 
     const ipfs = request.server.app.ipfs
 
-    ipfs.pulsarcast.create(topic, noop, null, (err) => {
+    ipfs.pulsarcast.create(topic, noop, null, (err, topicNode) => {
       if (err) {
         return reply(err)
       }
 
-      reply({ ok: 1 })
+      reply(topicNode)
     })
   }
 }
@@ -68,12 +68,15 @@ exports.publish = {
       return reply(new Error('Missing buf'))
     }
 
-    ipfs.pulsarcast.publish(topic, buf, (err) => {
+    ipfs.pulsarcast.publish(topic, buf, (err, topicNode, eventNode) => {
       if (err) {
         return reply(new Error(`Failed to publish to topic ${topic}: ${err}`))
       }
 
-      reply()
+      reply({
+        topic: topicNode,
+        event: eventNode
+      })
     })
   }
 }
