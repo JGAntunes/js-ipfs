@@ -45,7 +45,12 @@ exports.create = {
         return reply(err)
       }
 
-      reply(topicNode)
+      topicNode.getCID((err, cid) => {
+        if (err) {
+          return reply(err)
+        }
+        reply({ ...topicNode.getReadableFormat(), cid: cid.toBaseEncodedString() })
+      })
     })
   }
 }

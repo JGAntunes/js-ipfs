@@ -101,6 +101,7 @@ function HttpApi (repo, config, cliArgs) {
           // CORS is enabled by default
           // TODO: shouldn't, fix this
           this.server = new Hapi.Server({
+            useDomains: false,
             connections: {
               routes: {
                 cors: true
