@@ -1,6 +1,11 @@
 'use strict'
 
 const Hoek = require('hoek')
+const debug = require('debug')
+
+const log = debug('jsipfs:http-api')
+log.error = debug('jsipfs:http-api:error')
+log.debug = debug('jsipfs:http-api:debug')
 
 module.exports = (api, server) => {
   server.ext('onRequest', (request, reply) => {
@@ -16,6 +21,7 @@ module.exports = (api, server) => {
     let msg = 'Sorry, something went wrong, please retrace your steps.'
     let code = 1
 
+    console.log(res.isBoom)
     if (res.isBoom) {
       statusCode = res.output.payload.statusCode
       msg = res.output.payload.message
@@ -29,6 +35,7 @@ module.exports = (api, server) => {
       }
 
       const debug = {
+        stack: res.stack,
         method: req.method,
         url: request.url.path,
         headers: request.raw.req.headers,
@@ -37,8 +44,7 @@ module.exports = (api, server) => {
         response: res.output.payload
       }
 
-      api.log.error(res.stack)
-      server.log('error', debug)
+      log.error('error %j', debug)
 
       reply({
         Message: msg,

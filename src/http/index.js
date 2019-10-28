@@ -107,10 +107,10 @@ function HttpApi (repo, config, cliArgs) {
                 cors: true
               }
             },
-            debug: process.env.DEBUG ? {
-              request: ['*'],
-              log: ['*']
-            } : undefined
+            // debug: process.env.DEBUG ? {
+            //   request: ['*'],
+            //   log: ['*']
+            // } : undefined
           })
 
           this.server.app.ipfs = this.node
