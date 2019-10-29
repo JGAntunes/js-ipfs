@@ -21,7 +21,6 @@ module.exports = (api, server) => {
     let msg = 'Sorry, something went wrong, please retrace your steps.'
     let code = 1
 
-    console.log(res.isBoom)
     if (res.isBoom) {
       statusCode = res.output.payload.statusCode
       msg = res.output.payload.message

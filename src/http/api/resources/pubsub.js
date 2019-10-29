@@ -4,7 +4,23 @@ const PassThrough = require('stream').PassThrough
 const bs58 = require('bs58')
 const binaryQueryString = require('binary-querystring')
 
+const debug = require('debug')
+const log = debug('floodsub:test')
+
 exports = module.exports
+
+// We don't want to stream responses, for now this API
+// IS FOR TEST PURPOSES ONLY
+function subHandler (topic) {
+  return (msg) => {
+    log('event %j', {
+      event: true,
+      from: bs58.decode(msg.from).toString('base64'),
+      seqno: msg.seqno.toString('base64'),
+      topic
+    })
+  }
+}
 
 exports.subscribe = {
   handler: (request, reply) => {
@@ -18,36 +34,17 @@ exports.subscribe = {
 
     const ipfs = request.server.app.ipfs
 
-    const res = new PassThrough({ highWaterMark: 1 })
-
-    const handler = (msg) => {
-      res.write(JSON.stringify({
-        from: bs58.decode(msg.from).toString('base64'),
-        data: msg.data.toString('base64'),
-        seqno: msg.seqno.toString('base64'),
-        topicIDs: msg.topicIDs
-      }) + '\n', 'utf8')
-    }
-
-    // js-ipfs-http-client needs a reply, and go-ipfs does the same thing
-    res.write('{}\n')
-
-    const unsubscribe = () => {
-      ipfs.pubsub.unsubscribe(topic, handler, () => res.end())
-    }
-
-    request.once('disconnect', unsubscribe)
-    request.once('finish', unsubscribe)
-
-    ipfs.pubsub.subscribe(topic, handler, { discover: discover }, (err) => {
+    ipfs.pubsub.subscribe(topic, subHandler(topic), { discover: discover }, (err) => {
       if (err) {
         return reply(err)
       }
 
-      reply(res)
-        .header('X-Chunked-Output', '1')
-        .header('content-encoding', 'identity') // stop gzip from buffering, see https://github.com/hapijs/hapi/issues/2975
-        .header('content-type', 'application/json')
+      log('subscription %j', {
+        subscription: true,
+        topic
+      })
+
+      reply({ topic })
     })
   }
 }
@@ -75,7 +72,14 @@ exports.publish = {
         return reply(new Error(`Failed to publish to topic ${topic}: ${err}`))
       }
 
-      reply()
+      log('publish', {
+        publish: true,
+        topic
+      })
+
+      reply({
+        topic
+      })
     })
   }
 }
