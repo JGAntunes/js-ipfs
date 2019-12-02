@@ -2,20 +2,20 @@
 
 const peerId = require('peer-id')
 const waterfall = require('async/waterfall')
-const parallel = require('async/parallel')
+// const parallel = require('async/parallel')
 const promisify = require('promisify-es6')
 const defaultsDeep = require('@nodeutils/defaults-deep')
 const defaultConfig = require('../runtime/config-nodejs.js')
 const Keychain = require('libp2p-keychain')
-const {
-  DAGNode
-} = require('ipld-dag-pb')
-const UnixFs = require('ipfs-unixfs')
+// const {
+//   DAGNode
+// } = require('ipld-dag-pb')
+// const UnixFs = require('ipfs-unixfs')
 
-const IPNS = require('../ipns')
-const OfflineDatastore = require('../ipns/routing/offline-datastore')
+// const IPNS = require('../ipns')
+// const OfflineDatastore = require('../ipns/routing/offline-datastore')
 
-const addDefaultAssets = require('./init-assets')
+// const addDefaultAssets = require('./init-assets')
 
 module.exports = function init (self) {
   return promisify((opts, callback) => {
@@ -114,47 +114,47 @@ module.exports = function init (self) {
       },
       // Setup the offline routing for IPNS.
       // This is primarily used for offline ipns modifications, such as the initializeKeyspace feature.
-      (_, cb) => {
-        const offlineDatastore = new OfflineDatastore(self._repo)
+      // (_, cb) => {
+      //   const offlineDatastore = new OfflineDatastore(self._repo)
 
-        self._ipns = new IPNS(offlineDatastore, self._repo, self._peerInfo, self._keychain, self._options)
-        cb(null, true)
-      },
+      //   self._ipns = new IPNS(offlineDatastore, self._repo, self._peerInfo, self._keychain, self._options)
+      //   cb(null, true)
+      // },
       // add empty unixfs dir object (go-ipfs assumes this exists)
-      (_, cb) => {
-        if (opts.emptyRepo) {
-          return cb(null, true)
-        }
+      // (_, cb) => {
+      //   if (opts.emptyRepo) {
+      //     return cb(null, true)
+      //   }
 
-        const tasks = [
-          (cb) => {
-            waterfall([
-              (cb) => DAGNode.create(new UnixFs('directory').marshal(), cb),
-              (node, cb) => self.dag.put(node, {
-                version: 0,
-                format: 'dag-pb',
-                hashAlg: 'sha2-256'
-              }, cb),
-              (cid, cb) => self._ipns.initializeKeyspace(privateKey, cid.toBaseEncodedString(), cb)
-            ], cb)
-          }
-        ]
+      //   const tasks = [
+      //     (cb) => {
+      //       waterfall([
+      //         (cb) => DAGNode.create(new UnixFs('directory').marshal(), cb),
+      //         (node, cb) => self.dag.put(node, {
+      //           version: 0,
+      //           format: 'dag-pb',
+      //           hashAlg: 'sha2-256'
+      //         }, cb),
+      //         (cid, cb) => self._ipns.initializeKeyspace(privateKey, cid.toBaseEncodedString(), cb)
+      //       ], cb)
+      //     }
+      //   ]
 
-        if (typeof addDefaultAssets === 'function') {
-          // addDefaultAssets is undefined on browsers.
-          // See package.json browser config
-          tasks.push((cb) => addDefaultAssets(self, opts.log, cb))
-        }
+      //   if (typeof addDefaultAssets === 'function') {
+      //     // addDefaultAssets is undefined on browsers.
+      //     // See package.json browser config
+      //     tasks.push((cb) => addDefaultAssets(self, opts.log, cb))
+      //   }
 
-        self.log('adding assets')
-        parallel(tasks, (err) => {
-          if (err) {
-            cb(err)
-          } else {
-            cb(null, true)
-          }
-        })
-      }
+      //   self.log('adding assets')
+      //   parallel(tasks, (err) => {
+      //     if (err) {
+      //       cb(err)
+      //     } else {
+      //       cb(null, true)
+      //     }
+      //   })
+      // }
     ], done)
   })
 }

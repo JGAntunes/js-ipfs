@@ -124,11 +124,11 @@ function HttpApi (repo, config, cliArgs) {
             labels: 'API'
           })
 
-          this.server.connection({
-            host: gateway[2],
-            port: gateway[4],
-            labels: 'Gateway'
-          })
+          // this.server.connection({
+          //   host: gateway[2],
+          //   port: gateway[4],
+          //   labels: 'Gateway'
+          // })
 
           // Nicer errors
           errorHandler(this, this.server)
@@ -136,7 +136,7 @@ function HttpApi (repo, config, cliArgs) {
           // load routes
           require('./api/routes')(this.server)
           // load gateway routes
-          require('./gateway/routes')(this.server)
+          // require('./gateway/routes')(this.server)
 
           // Set default headers
           setHeader(this.server,
@@ -151,14 +151,14 @@ function HttpApi (repo, config, cliArgs) {
       },
       (cb) => {
         const api = this.server.select('API')
-        const gateway = this.server.select('Gateway')
+        // const gateway = this.server.select('Gateway')
         this.apiMultiaddr = multiaddr('/ip4/127.0.0.1/tcp/' + api.info.port)
         api.info.ma = uriToMultiaddr(api.info.uri)
-        gateway.info.ma = uriToMultiaddr(gateway.info.uri)
+        // gateway.info.ma = uriToMultiaddr(gateway.info.uri)
 
         console.log('API listening on %s', api.info.ma)
-        console.log('Gateway (read only) listening on %s', gateway.info.ma)
-        console.log('Web UI available at %s', api.info.uri + '/webui')
+        // console.log('Gateway (read only) listening on %s', gateway.info.ma)
+        // console.log('Web UI available at %s', api.info.uri + '/webui')
 
         // for the CLI to know the where abouts of the API
         this.node._repo.apiAddr.set(api.info.ma, cb)

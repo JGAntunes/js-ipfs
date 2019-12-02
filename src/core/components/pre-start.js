@@ -94,8 +94,8 @@ module.exports = function preStart (self) {
         }
 
         cb()
-      },
-      (cb) => self.pin._load(cb)
+      }
+      // (cb) => self.pin._load(cb)
     ], callback)
   }
 }

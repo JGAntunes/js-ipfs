@@ -28,13 +28,13 @@ module.exports = (self) => {
     }
 
     self.state.stop()
-    self._blockService.unsetExchange()
-    self._bitswap.stop()
-    self._preload.stop()
+    // self._blockService.unsetExchange()
+    // self._bitswap.stop()
+    // self._preload.stop()
 
     series([
-      (cb) => self._ipns.republisher.stop(cb),
-      (cb) => self._mfsPreload.stop(cb),
+      // (cb) => self._ipns.republisher.stop(cb),
+      // (cb) => self._mfsPreload.stop(cb),
       (cb) => self.libp2p.stop(cb),
       (cb) => self._repo.close(cb)
     ], done)
