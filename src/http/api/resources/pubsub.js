@@ -72,7 +72,7 @@ exports.publish = {
         return reply(new Error(`Failed to publish to topic ${topic}: ${err}`))
       }
 
-      log('publish', {
+      log('publish %j', {
         publish: true,
         topic
       })
