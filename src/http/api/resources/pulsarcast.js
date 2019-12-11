@@ -32,15 +32,24 @@ exports.subscribe = {
 exports.create = {
   handler: (request, reply) => {
     const query = request.query
+    const allAllowedToPublish = query.allAllowedToPublish === 'true'
     const topic = query.arg
+    const options = {}
 
     if (!topic) {
       return reply(new Error('Missing topic'))
     }
 
+    if (allAllowedToPublish) {
+      options.metadata = {
+        allowedToPublish: false,
+        requestToPublish: false
+      }
+    }
+
     const ipfs = request.server.app.ipfs
 
-    ipfs.pulsarcast.create(topic, noop, null, (err, topicNode) => {
+    ipfs.pulsarcast.create(topic, noop, options, (err, topicNode) => {
       if (err) {
         return reply(err)
       }
