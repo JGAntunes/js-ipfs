@@ -24,7 +24,7 @@ exports.subscribe = {
         return reply(err)
       }
 
-      reply(topicNode)
+      reply({ ...topicNode.getReadableFormat(), cid: topic })
     })
   }
 }
@@ -82,14 +82,14 @@ exports.publish = {
       return reply(new Error('Missing buf'))
     }
 
-    ipfs.pulsarcast.publish(topic, buf, (err, topicNode, eventNode) => {
+    ipfs.pulsarcast.publish(topic, buf, (err, eventCID, topicNode, eventNode) => {
       if (err) {
         return reply(new Error(`Failed to publish to topic ${topic}: ${err}`))
       }
 
       reply({
-        topic: topicNode,
-        event: eventNode
+        topic: { ...topicNode.getReadableFormat(), cid: topic },
+        event: { ...eventNode.getReadableFormat(), cid: eventCID && eventCID.toBaseEncodedString() }
       })
     })
   }
